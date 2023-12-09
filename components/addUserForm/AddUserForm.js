@@ -5,8 +5,6 @@ const AddUserForm = ({ onAddUser }) => {
     const [newUser, setNewUser] = useState({
         firstName: '',
         lastName: '',
-        latitude: 0,
-        longitude: 0,
         email: '',
         phone: 0,
         birthDate: new Date().toISOString().split('T')[0]
@@ -26,8 +24,6 @@ const AddUserForm = ({ onAddUser }) => {
         setNewUser({
             firstName: '',
             lastName: '',
-            latitude: 0,
-            longitude: 0,
             email: '',
             phone: 0,
             birthDate: new Date().toISOString().split('T')[0]
