@@ -1,34 +1,50 @@
 import React, { useState } from 'react';
-import styles from "./app.css"
+import styles from "./app.module.scss"
 
-const AddUserForm = ({ onAddUser }) => {
+const AddUserForm = ({ fetchData }) => {
     const [newUser, setNewUser] = useState({
         firstName: '',
-        lastName: '',
-        email: '',
-        phone: 0,
-        birthDate: new Date().toISOString().split('T')[0]
-    });
+    lastName: '',
+    email: '',
+    phone: 0,
+    birthDate: new Date().toISOString().split('T')[0]
+  });
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewUser((prevUser) => ({
-            ...prevUser,
-            [name]: value,
-        }));
-    };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+  };
 
-    const handleAddUser = () => {
-        const newUserWithId = { ...newUser };
-        onAddUser(newUserWithId);
-        setNewUser({
-            firstName: '',
-            lastName: '',
-            email: '',
-            phone: 0,
-            birthDate: new Date().toISOString().split('T')[0]
-        });
-    };
+  const handleAddUser = async () => {
+    try {
+      // Ensure that you don't have circular references in newUser
+      const response = await fetch('http://localhost:7006/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          email: newUser.email,
+          phone: newUser.phone,
+          birthDate: newUser.birthDate,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      fetchData(); // Ponowne pobranie danych z serwera
+      setShowAddUserForm(false);
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
+  };
 
     return (
         <div>
@@ -54,26 +70,7 @@ const AddUserForm = ({ onAddUser }) => {
                         onChange={handleInputChange}
                     />
                 </label>
-                <label className={styles.label}>
-                    <div>Szerokość geograficzna</div>
-                    <input
-                        className={styles.inputField}
-                        type="number"
-                        name="latitude"
-                        value={newUser.latitude}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <label className={styles.label}>
-                    <div>Długość geograficzna</div>
-                    <input
-                        className={styles.inputField}
-                        type="number"
-                        name="longitude"
-                        value={newUser.longitude}
-                        onChange={handleInputChange}
-                    />
-                </label>
+    
                 <label className={styles.label}>
                     <div>Email</div>
                     <input

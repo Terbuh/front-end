@@ -1,17 +1,17 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import AddUserForm from '../../components/addUserForm/AddUserForm';
+import EditUserForm from '../../components/editUserForm/EditUserForm'; // Update the path
 import styles from "./app.module.scss"
 
 const UsersTable = () => {
-  const [users, setUsers] = useState()
-   
-
+  const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showDetailsPopup, setShowDetailsPopup] = useState(false);
   const [showAddUserForm, setShowAddUserForm] = useState(false);
-
+  const [showEditUserForm, setShowEditUserForm] = useState(false);
   const [userNames, setUserNames] = useState([]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,28 +34,58 @@ const UsersTable = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
+      setUsers(data);
       setUserNames(data);
     } catch (error) {
       console.error('Error fetching user names:', error);
     }
   };
+
+
+
   
+  const handleAddUser = async (newUser) => {
+    try {
+      const response = await fetch('http://localhost:7006/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newUser),
+      });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-  const handleAddUser = (newUser) => {
-    const newUserWithId = { ...newUser, id: {phone} };
-    setUsers((prevUsers) => [...prevUsers, newUserWithId]);
-    setShowAddUserForm(false);
+      fetchData();
+      setShowAddUserForm(false);
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
   };
+  
 
   const handleShowDetails = (user) => {
     setSelectedUser(user);
     setShowDetailsPopup(true);
   };
 
-  const handleDeleteUser = (userId) => {
-    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
-    setShowDetailsPopup(false);
+  const handleDeleteUser = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:7006/api/users/${userId}`, {
+        method: 'DELETE',
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      fetchData();
+      setShowDetailsPopup(false);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
   };
 
   const handleClosePopup = () => {
@@ -67,7 +97,14 @@ const UsersTable = () => {
     setShowAddUserForm((prev) => !prev);
   };
 
-
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setShowEditUserForm(true);
+  };
+  
+  const handleCloseEditUserForm = () => {
+    setShowEditUserForm(false);
+  };
 
   return (
     <div className={styles.app}>
@@ -87,6 +124,7 @@ const UsersTable = () => {
               <td className={styles.td}>{user.surname}</td>
               <td className={styles.td}>
                 <div className={styles.button} onClick={() => handleShowDetails(user)}>Szczegóły</div>
+                
               </td>
             </tr>
           ))}
@@ -95,18 +133,17 @@ const UsersTable = () => {
 
       <div className={styles.button} onClick={handleToggleAddUserForm}>Dodaj użytkownika</div>
 
-      {showAddUserForm && <AddUserForm onAddUser={handleAddUser} />}
-
+      {showAddUserForm && <AddUserForm onAddUser={handleAddUser} fetchData={fetchData} />}
       {showDetailsPopup && (
         <div className={styles.popup}>
           <div className={styles.popupContent}>
             <div className={styles.userDetailsTitle}>User Details</div>
             <div className={styles.wrapper}>
               <div className={styles.textWrapper}>
-                Imię: {selectedUser.firstName}
+                Imię: {selectedUser.name}
               </div>
               <div className={styles.textWrapper}>
-                Nazwisko: {selectedUser.lastName}
+                Nazwisko: {selectedUser.surname}
               </div>
               <div className={styles.textWrapper}>
                 Email: {selectedUser.email}
@@ -118,12 +155,24 @@ const UsersTable = () => {
                 Data urodzenia: {selectedUser.birthDate}
               </div>
               <div className={styles.wrapperButtons}>
+              <div className={styles.button} onClick={() => handleEditUser(selectedUser)}>Edytuj użytkownika</div>
                 <div className={styles.button} onClick={() => handleDeleteUser(selectedUser.id)}>Usuń użytkownika</div>
                 <div className={styles.button} onClick={handleClosePopup}>Zamknij</div>
               </div>
             </div>
           </div>
         </div>
+      )}
+        {showEditUserForm && (
+        <EditUserForm
+          user={selectedUser}
+          onSave={(editedUser) => {
+            const updatedUsers = users.map((u) => (u.id === editedUser.id ? editedUser : u));
+            setUsers(updatedUsers);
+            handleCloseEditUserForm(); 
+          }}
+          onClose={handleCloseEditUserForm} 
+        />
       )}
     </div>
   );
