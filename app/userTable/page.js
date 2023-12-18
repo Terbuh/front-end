@@ -1,8 +1,8 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import AddUserForm from '../../components/addUserForm/AddUserForm';
-import EditUserForm from '../../components/editUserForm/EditUserForm'; // Update the path
-import styles from "./app.module.scss"
+"use client";
+import React, { useState, useEffect } from "react";
+import AddUserForm from "../../components/addUserForm/AddUserForm";
+import EditUserForm from "../../components/editUserForm/EditUserForm";
+import styles from "./app.module.scss";
 
 const UsersTable = () => {
   const [users, setUsers] = useState([]);
@@ -12,15 +12,14 @@ const UsersTable = () => {
   const [showEditUserForm, setShowEditUserForm] = useState(false);
   const [userNames, setUserNames] = useState([]);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:7006/api/users');
+        const response = await fetch("http://localhost:7006/api/users");
         const data = await response.json();
         setUserNames(data);
       } catch (error) {
-        console.error('Error fetching user names:', error);
+        console.error("Error fetching user names:", error);
       }
     };
 
@@ -29,7 +28,7 @@ const UsersTable = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:7006/api/users');
+      const response = await fetch("http://localhost:7006/api/users");
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -37,19 +36,16 @@ const UsersTable = () => {
       setUsers(data);
       setUserNames(data);
     } catch (error) {
-      console.error('Error fetching user names:', error);
+      console.error("Error fetching user names:", error);
     }
   };
 
-
-
-  
   const handleAddUser = async (newUser) => {
     try {
-      const response = await fetch('http://localhost:7006/api/users', {
-        method: 'POST',
+      const response = await fetch("http://localhost:7006/api/users", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(newUser),
       });
@@ -61,10 +57,9 @@ const UsersTable = () => {
       fetchData();
       setShowAddUserForm(false);
     } catch (error) {
-      console.error('Error adding user:', error);
+      console.error("Error adding user:", error);
     }
   };
-  
 
   const handleShowDetails = (user) => {
     setSelectedUser(user);
@@ -73,18 +68,21 @@ const UsersTable = () => {
 
   const handleDeleteUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:7006/api/users/${userId}`, {
-        method: 'DELETE',
-      });
-  
+      const response = await fetch(
+        `http://localhost:7006/api/users/${userId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       fetchData();
       setShowDetailsPopup(false);
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
     }
   };
 
@@ -101,7 +99,7 @@ const UsersTable = () => {
     setSelectedUser(user);
     setShowEditUserForm(true);
   };
-  
+
   const handleCloseEditUserForm = () => {
     setShowEditUserForm(false);
   };
@@ -114,30 +112,36 @@ const UsersTable = () => {
           <tr>
             <th className={styles.th}>Imię</th>
             <th className={styles.th}>Nazwisko</th>
-            <th></th>
+            <th className={styles.th}></th>
           </tr>
         </thead>
         <tbody>
-        {userNames.map((user) => (
-           <tr key={user.id}>
+          {userNames.map((user) => (
+            <tr className={styles.tr} key={user.id}>
               <td className={styles.td}>{user.name}</td>
               <td className={styles.td}>{user.surname}</td>
               <td className={styles.td}>
-                <div className={styles.button} onClick={() => handleShowDetails(user)}>Szczegóły</div>
-                
+                <div
+                  className={styles.button}
+                  onClick={() => handleShowDetails(user)}
+                >
+                  Szczegóły
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      <div className={styles.button} onClick={handleToggleAddUserForm}>Dodaj użytkownika</div>
-
-      {showAddUserForm && <AddUserForm onAddUser={handleAddUser} fetchData={fetchData} />}
+      <div className={styles.button} onClick={handleToggleAddUserForm}>
+        Dodaj użytkownika
+      </div>
+      {showAddUserForm && (
+        <AddUserForm onAddUser={handleAddUser} fetchData={fetchData} />
+      )}
       {showDetailsPopup && (
         <div className={styles.popup}>
           <div className={styles.popupContent}>
-            <div className={styles.userDetailsTitle}>User Details</div>
+            <div className={styles.userDetailsTitle}>Szczegóły</div>
             <div className={styles.wrapper}>
               <div className={styles.textWrapper}>
                 Imię: {selectedUser.name}
@@ -155,23 +159,37 @@ const UsersTable = () => {
                 Data urodzenia: {selectedUser.birthDate}
               </div>
               <div className={styles.wrapperButtons}>
-              <div className={styles.button} onClick={() => handleEditUser(selectedUser)}>Edytuj użytkownika</div>
-                <div className={styles.button} onClick={() => handleDeleteUser(selectedUser.id)}>Usuń użytkownika</div>
-                <div className={styles.button} onClick={handleClosePopup}>Zamknij</div>
+                <div
+                  className={styles.button}
+                  onClick={() => handleEditUser(selectedUser)}
+                >
+                  Edytuj użytkownika
+                </div>
+                <div
+                  className={styles.button}
+                  onClick={() => handleDeleteUser(selectedUser.id)}
+                >
+                  Usuń użytkownika
+                </div>
+                <div className={styles.button} onClick={handleClosePopup}>
+                  Zamknij
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
-        {showEditUserForm && (
+      {showEditUserForm && (
         <EditUserForm
           user={selectedUser}
           onSave={(editedUser) => {
-            const updatedUsers = users.map((u) => (u.id === editedUser.id ? editedUser : u));
+            const updatedUsers = users.map((u) =>
+              u.id === editedUser.id ? editedUser : u
+            );
             setUsers(updatedUsers);
-            handleCloseEditUserForm(); 
+            handleCloseEditUserForm();
           }}
-          onClose={handleCloseEditUserForm} 
+          onClose={handleCloseEditUserForm}
         />
       )}
     </div>

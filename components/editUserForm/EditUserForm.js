@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styles from "../addUserForm//app.module.scss"
+import React, { useState } from "react";
+import styles from "../addUserForm//app.module.scss";
 
 const EditUserForm = ({ user, onSave, onClose }) => {
   const [editedUser, setEditedUser] = useState({ ...user });
@@ -14,22 +14,25 @@ const EditUserForm = ({ user, onSave, onClose }) => {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:7006/api/users/${editedUser.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editedUser),
-      });
+      const response = await fetch(
+        `http://localhost:7006/api/users/${editedUser.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editedUser),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      onSave(editedUser); // Aktualizacja danych w UsersTable
-      onClose(); // Zamknięcie formularza edycji
+      onSave(editedUser);
+      onClose();
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error("Error updating user:", error);
     }
   };
 
@@ -88,8 +91,12 @@ const EditUserForm = ({ user, onSave, onClose }) => {
             onChange={handleInputChange}
           />
         </label>
-        <div className={styles.button} onClick={handleSave}>Zapisz</div>
-        <div className={styles.button} onClick={onClose}>Anuluj</div>
+        <div className={styles.button} onClick={handleSave}>
+          Zapisz
+        </div>
+        <div className={styles.button} onClick={onClose}>
+          Anuluj
+        </div>
       </div>
     </div>
   );
