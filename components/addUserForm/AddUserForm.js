@@ -46,7 +46,7 @@ const AddUserForm = ({ fetchData }) => {
   };
 
   return (
-    <div>
+    <div className={styles.wrapper}>
       <div className={styles.userAddTitle}>Formularz</div>
       <div className={styles.labelsWrapper}>
         <label className={styles.label}>

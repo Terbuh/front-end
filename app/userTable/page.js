@@ -106,6 +106,7 @@ const UsersTable = () => {
 
   return (
     <div className={styles.app}>
+      <div className={styles.tableWrapper}>
       <h1 className={styles.h1}>Adresy użytkowników</h1>
       <table className={styles.table}>
         <thead>
@@ -135,9 +136,12 @@ const UsersTable = () => {
       <div className={styles.button} onClick={handleToggleAddUserForm}>
         Dodaj użytkownika
       </div>
+      </div>
+      <div className={styles.addUser}>
       {showAddUserForm && (
         <AddUserForm onAddUser={handleAddUser} fetchData={fetchData} />
       )}
+      </div>
       {showDetailsPopup && (
         <div className={styles.popup}>
           <div className={styles.popupContent}>
@@ -163,13 +167,13 @@ const UsersTable = () => {
                   className={styles.button}
                   onClick={() => handleEditUser(selectedUser)}
                 >
-                  Edytuj użytkownika
+                  Edytuj
                 </div>
                 <div
                   className={styles.button}
                   onClick={() => handleDeleteUser(selectedUser.id)}
                 >
-                  Usuń użytkownika
+                  Usuń
                 </div>
                 <div className={styles.button} onClick={handleClosePopup}>
                   Zamknij
