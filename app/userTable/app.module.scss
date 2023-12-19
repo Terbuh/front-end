@@ -4,8 +4,22 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  position: relative;
   align-items: center;
+  flex-flow: row;
+}
+
+.tableWrapper {
+  width: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-right: 20px;
+  position: relative;
+}
+
+.addUser {
+  padding: 20px;
 }
 
 .h1 {
@@ -44,8 +58,6 @@
 }
 
 .popup {
-  position: absolute;
-  width: 40%;
   background-color: #b0d7ff;
   border-radius: 20px;
   padding: 20px;
@@ -155,16 +167,4 @@
   box-shadow: 1px 1px 5px rgba(66, 66, 66, 0.53);
   text-shadow: 0px 0px 0px rgba(66, 66, 66, 0.75);
   font-family: "Roboto";
-}
-
-.tableWrapper {
-  width: 40%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.addUser {
-  margin-left: 5%;
 }

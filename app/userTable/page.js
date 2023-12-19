@@ -63,7 +63,8 @@ const UsersTable = () => {
 
   const handleShowDetails = (user) => {
     setSelectedUser(user);
-    setShowDetailsPopup(true);
+    setShowDetailsPopup((prev) => !prev);
+    setShowEditUserForm(false);
   };
 
   const handleDeleteUser = async (userId) => {
@@ -81,6 +82,7 @@ const UsersTable = () => {
 
       fetchData();
       setShowDetailsPopup(false);
+      setShowEditUserForm(false);
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -89,6 +91,7 @@ const UsersTable = () => {
   const handleClosePopup = () => {
     setSelectedUser(null);
     setShowDetailsPopup(false);
+    setShowEditUserForm(false);
   };
 
   const handleToggleAddUserForm = () => {
@@ -107,82 +110,84 @@ const UsersTable = () => {
   return (
     <div className={styles.app}>
       <div className={styles.tableWrapper}>
-      <h1 className={styles.h1}>Adresy użytkowników</h1>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th className={styles.th}>Imię</th>
-            <th className={styles.th}>Nazwisko</th>
-            <th className={styles.th}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {userNames.map((user) => (
-            <tr className={styles.tr} key={user.id}>
-              <td className={styles.td}>{user.name}</td>
-              <td className={styles.td}>{user.surname}</td>
-              <td className={styles.td}>
-                <div
-                  className={styles.button}
-                  onClick={() => handleShowDetails(user)}
-                >
-                  Szczegóły
-                </div>
-              </td>
+        <h1 className={styles.h1}>Adresy użytkowników</h1>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th className={styles.th}>Imię</th>
+              <th className={styles.th}>Nazwisko</th>
+              <th className={styles.th}></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className={styles.button} onClick={handleToggleAddUserForm}>
-        Dodaj użytkownika
-      </div>
+          </thead>
+          <tbody>
+            {userNames.map((user) => (
+              <tr className={styles.tr} key={user.id}>
+                <td className={styles.td}>{user.name}</td>
+                <td className={styles.td}>{user.surname}</td>
+                <td className={styles.td}>
+                  <div
+                    className={styles.button}
+                    onClick={() => handleShowDetails(user)}
+                  >
+                    Szczegóły
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className={styles.button} onClick={handleToggleAddUserForm}>
+          Dodaj użytkownika
+        </div>
       </div>
       <div className={styles.addUser}>
-      {showAddUserForm && (
-        <AddUserForm onAddUser={handleAddUser} fetchData={fetchData} />
-      )}
+        {showAddUserForm && (
+          <AddUserForm onAddUser={handleAddUser} fetchData={fetchData} />
+        )}
       </div>
-      {showDetailsPopup && (
-        <div className={styles.popup}>
-          <div className={styles.popupContent}>
-            <div className={styles.userDetailsTitle}>Szczegóły</div>
-            <div className={styles.wrapper}>
-              <div className={styles.textWrapper}>
-                Imię: {selectedUser.name}
-              </div>
-              <div className={styles.textWrapper}>
-                Nazwisko: {selectedUser.surname}
-              </div>
-              <div className={styles.textWrapper}>
-                Email: {selectedUser.email}
-              </div>
-              <div className={styles.textWrapper}>
-                Nr. tel: {selectedUser.phone}
-              </div>
-              <div className={styles.textWrapper}>
-                Data urodzenia: {selectedUser.birthDate}
-              </div>
-              <div className={styles.wrapperButtons}>
-                <div
-                  className={styles.button}
-                  onClick={() => handleEditUser(selectedUser)}
-                >
-                  Edytuj
+      <div className={styles.addUser}>
+        {showDetailsPopup && (
+          <div className={styles.popup}>
+            <div className={styles.popupContent}>
+              <div className={styles.userDetailsTitle}>Szczegóły</div>
+              <div className={styles.wrapper}>
+                <div className={styles.textWrapper}>
+                  Imię: {selectedUser.name}
                 </div>
-                <div
-                  className={styles.button}
-                  onClick={() => handleDeleteUser(selectedUser.id)}
-                >
-                  Usuń
+                <div className={styles.textWrapper}>
+                  Nazwisko: {selectedUser.surname}
                 </div>
-                <div className={styles.button} onClick={handleClosePopup}>
-                  Zamknij
+                <div className={styles.textWrapper}>
+                  Email: {selectedUser.email}
+                </div>
+                <div className={styles.textWrapper}>
+                  Nr. tel: {selectedUser.phone}
+                </div>
+                <div className={styles.textWrapper}>
+                  Data urodzenia: {selectedUser.birthDate}
+                </div>
+                <div className={styles.wrapperButtons}>
+                  <div
+                    className={styles.button}
+                    onClick={() => handleEditUser(selectedUser)}
+                  >
+                    Edytuj
+                  </div>
+                  <div
+                    className={styles.button}
+                    onClick={() => handleDeleteUser(selectedUser.id)}
+                  >
+                    Usuń
+                  </div>
+                  <div className={styles.button} onClick={handleClosePopup}>
+                    Zamknij
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
       {showEditUserForm && (
         <EditUserForm
           user={selectedUser}

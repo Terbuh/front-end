@@ -74,7 +74,7 @@ const AddUserForm = ({ fetchData }) => {
           <div>Email</div>
           <input
             className={styles.inputField}
-            type="text"
+            type="email"
             name="email"
             value={newUser.email}
             onChange={handleInputChange}

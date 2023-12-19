@@ -37,7 +37,7 @@ const EditUserForm = ({ user, onSave, onClose }) => {
   };
 
   return (
-    <div>
+    <div className={styles.wrapper}>
       <div className={styles.userAddTitle}>Edytuj użytkownika</div>
       <div className={styles.labelsWrapper}>
         <label className={styles.label}>
