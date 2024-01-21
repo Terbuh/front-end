@@ -1,61 +1,52 @@
 import React, { useState } from "react";
-import styles from "./app.module.scss";
+import styles from "../addUserForm//app.module.scss";
 
-const AddUserForm = ({ fetchData }) => {
-  const [newUser, setNewUser] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: 0,
-    birthDate: new Date().toISOString().split("T")[0],
-  });
+const EditUserForm = ({ user, onSave, onClose }) => {
+  const [editedUser, setEditedUser] = useState({ ...user });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewUser((prevUser) => ({
+    setEditedUser((prevUser) => ({
       ...prevUser,
       [name]: value,
     }));
   };
 
-  const handleAddUser = async () => {
+  const handleSave = async () => {
     try {
-      const response = await fetch("http://localhost:7006/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: newUser.firstName,
-          surname: newUser.lastName,
-          email: newUser.email,
-          phone: newUser.phone,
-          birthDate: newUser.birthDate,
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:7006/api/users/${editedUser.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editedUser),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      fetchData();
-      setShowAddUserForm(false);
+      onSave(editedUser);
+      onClose();
     } catch (error) {
-      console.error("Error adding user:", error);
+      console.error("Error updating user:", error);
     }
   };
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.userAddTitle}>Formularz</div>
+      <div className={styles.userAddTitle}>Edytuj użytkownika</div>
       <div className={styles.labelsWrapper}>
         <label className={styles.label}>
           <div>Imię</div>
           <input
             className={styles.inputField}
             type="text"
-            name="firstName"
-            value={newUser.firstName}
+            name="name"
+            value={editedUser.name}
             onChange={handleInputChange}
           />
         </label>
@@ -64,8 +55,8 @@ const AddUserForm = ({ fetchData }) => {
           <input
             className={styles.inputField}
             type="text"
-            name="lastName"
-            value={newUser.lastName}
+            name="surname"
+            value={editedUser.surname}
             onChange={handleInputChange}
           />
         </label>
@@ -74,9 +65,9 @@ const AddUserForm = ({ fetchData }) => {
           <div>Email</div>
           <input
             className={styles.inputField}
-            type="email"
+            type="text"
             name="email"
-            value={newUser.email}
+            value={editedUser.email}
             onChange={handleInputChange}
           />
         </label>
@@ -86,7 +77,7 @@ const AddUserForm = ({ fetchData }) => {
             className={styles.inputField}
             type="number"
             name="phone"
-            value={newUser.phone}
+            value={editedUser.phone}
             onChange={handleInputChange}
           />
         </label>
@@ -96,16 +87,19 @@ const AddUserForm = ({ fetchData }) => {
             className={styles.inputField}
             type="date"
             name="birthDate"
-            value={newUser.birthDate}
+            value={editedUser.birthDate}
             onChange={handleInputChange}
           />
         </label>
-        <div className={styles.button} onClick={handleAddUser}>
-          Dodaj
+        <div className={styles.button} onClick={handleSave}>
+          Zapisz
+        </div>
+        <div className={styles.button} onClick={onClose}>
+          Anuluj
         </div>
       </div>
     </div>
   );
 };
 
-export default AddUserForm;
+export default EditUserForm;
